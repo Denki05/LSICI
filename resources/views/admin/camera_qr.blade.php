@@ -1,61 +1,98 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Scan QR Code</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 2rem;
+            background-color: #f9fafb;
+            text-align: center;
+        }
+
+        #preview {
+            margin: 2rem auto;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .loader {
+            margin-top: 1rem;
+            display: none;
+        }
+    </style>
 </head>
 <body>
-    <h4>Silakan scan QR Code Anda</h4>
-    <div id="preview" style="width: 100%; max-width: 400px; margin: auto;"></div>
+    <h2>Silakan Scan QR Code Anda</h2>
+    <div id="preview"></div>
+    <div class="loader" id="loader">Memproses...</div>
 
     <script>
-        const html5QrCode = new Html5Qrcode("preview");
+        document.addEventListener("DOMContentLoaded", async () => {
+            const previewElementId = "preview";
+            const loader = document.getElementById("loader");
+            const html5QrCode = new Html5Qrcode(previewElementId);
 
-        Html5Qrcode.getCameras().then(devices => {
-            if (devices && devices.length) {
-                const cameraId = devices[0].id;
+            try {
+                const devices = await Html5Qrcode.getCameras();
 
-                html5QrCode.start(
+                if (!devices.length) {
+                    alert("Tidak ada kamera yang ditemukan.");
+                    return;
+                }
+
+                // Cari kamera belakang (jika ada)
+                const backCamera = devices.find(device =>
+                    device.label.toLowerCase().includes("back") ||
+                    device.label.toLowerCase().includes("rear") ||
+                    device.label.toLowerCase().includes("environment")
+                );
+
+                const cameraId = backCamera ? backCamera.id : devices[0].id;
+
+                await html5QrCode.start(
                     cameraId,
                     {
                         fps: 10,
-                        qrbox: 250
+                        qrbox: { width: 250, height: 250 }
                     },
-                    qrCodeMessage => {
-                        html5QrCode.stop();
+                    async (qrCodeMessage) => {
+                        try {
+                            loader.style.display = "block";
+                            await html5QrCode.stop();
 
-                        fetch("{{ route('guest.storeFromQr') }}", {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json",
-                                "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                            },
-                            body: JSON.stringify({ slug: qrCodeMessage })
-                        })
-                        .then(res => res.json())
-                        .then(data => {
-                            alert(data.message || data.error);
+                            const response = await fetch("{{ route('guest.storeFromQr') }}", {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                                },
+                                body: JSON.stringify({ slug: qrCodeMessage })
+                            });
 
-                            if (window.opener) {
-                                window.opener.location.reload();
-                            }
+                            const data = await response.json();
+                            alert(data.message || data.error || "QR berhasil diproses.");
+
+                            if (window.opener) window.opener.location.reload();
                             window.close();
-                        })
-                        .catch(error => {
+                        } catch (error) {
                             console.error("QR Processing Error:", error);
                             alert("Gagal memproses QR Code.");
                             window.close();
-                        });
+                        }
                     },
-                    errorMessage => {
+                    (errorMessage) => {
                         console.warn("Scan error:", errorMessage);
                     }
                 );
+            } catch (err) {
+                console.error("Camera access error:", err);
+                alert("Gagal mengakses kamera. Pastikan izin telah diberikan.");
             }
-        }).catch(err => {
-            console.error("Camera error:", err);
-            alert("Tidak dapat mengakses kamera. Pastikan izin diberikan dan perangkat mendukung.");
         });
     </script>
 </body>

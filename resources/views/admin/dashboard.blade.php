@@ -2,6 +2,21 @@
 
 @section('content')
 <div class="container">
+    <!-- Notifikasi sukses -->
+    @if (session('success'))
+        <div id="flash-success" class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+            {{ session('success') }}
+        </div>
+        <script>
+            setTimeout(() => {
+                const alert = document.getElementById('flash-success');
+                if (alert) {
+                    alert.remove();
+                }
+            }, 3000); // hilang setelah 3 detik
+        </script>
+    @endif
+
     <h2 class="mb-4">List Guest Book</h2>
 
     <div class="mb-4">
@@ -28,7 +43,7 @@
                 <td>{{ $guest->email }}</td>
                 <td>{{ $guest->company }}</td>
                 <td>
-                    <form action="{{ route('admin.guest.delete', $guest->id) }}" method="POST">
+                    <form action="{{ route('admin.guest.delete', $guest->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this guest?');">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="btn btn-danger btn-sm">Hapus</button>

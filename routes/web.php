@@ -6,6 +6,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\RsvpController;
 use App\Http\Controllers\ApiConsumerController;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Response;
 
 // Menambahkan route authentication
 Auth::routes();
@@ -49,3 +50,23 @@ Route::middleware(['auth', 'admin'])->group(function () {
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+Route::get('/qrcodes/{filename}', function ($filename) {
+    $path = public_path('qrcodes/' . $filename);
+
+    if (!file_exists($path)) {
+        abort(404);
+    }
+
+    return Response::file($path);
+})->where('filename', '.*')->name('qr.show');
+
+Route::get('/rsvp/{filename}', function ($filename) {
+    $path = public_path('rsvp/' . $filename);
+
+    if (!file_exists($path)) {
+        abort(404);
+    }
+
+    return Response::file($path);
+})->where('filename', '.*')->name('rsvp.image');

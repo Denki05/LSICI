@@ -38,12 +38,12 @@
     <!-- Header -->
     <header class="flex-shrink-0 py-6 px-2 md:px-12 text-center">
         <div class="flex flex-row items-center justify-center gap-6 flex-wrap">
-          <img src="{{ asset('rsvp/logo_ppi_2.png') }}" alt="PPI 2025 Logo" class="max-h-20 md:max-h-32 w-auto object-contain">
-
+          <img src="{{ route('rsvp.image', ['filename' => 'logo_ppi_2.png']) }}" alt="PPI 2025 Logo" class="max-h-20 md:max-h-32 w-auto object-contain">
+        
           <!-- Garis pemisah -->
           <div class="h-16 md:h-28 border-l-4 border-black"></div>
-
-          <img src="{{ asset('rsvp/logo_ici.png') }}" alt="ICI 2025 Logo" class="max-h-20 md:max-h-32 w-auto object-contain">
+        
+          <img src="{{ route('rsvp.image', ['filename' => 'logo_ici.png']) }}" alt="ICI 2025 Logo" class="max-h-20 md:max-h-32 w-auto object-contain">
         </div>
 
         <p class="mt-4 text-base md:text-sm">
@@ -61,7 +61,7 @@
         <div class="grid grid-cols-1 md:grid-cols-{{ $guest->attendance != 0 ? '3' : '2' }} gap-8">
 
           <!-- 1. Event Details -->
-          <div>
+          <div class="text-center">
             <h2 class="text-2xl md:text-3xl font-bold">Event Details</h2>
             <p class="mt-4 text-sm md:text-base">📅 Date: 14-16 May 2025</p>
             <p class="text-sm md:text-base">📍 Location: Hall D & A3, JL Expo Kemayoran, Jakarta, Indonesia</p>
@@ -69,13 +69,13 @@
           </div>
 
           <!-- 2. RSVP Form or Confirmation -->
-          <div>
+          <div class="text-center">
             <h2 class="text-xl md:text-2xl font-bold">Confirm Your Attendance</h2>
             <form action="{{ route('admin.updateInvitation', $guest->slug) }}" method="POST" class="mt-4">
               @csrf
 
               @if($guest->attendance == 0)
-                <div class="grid grid-cols-1 gap-4">
+                <div class="grid grid-cols-2 gap-4">
                   <div>
                     <label class="block">
                       <span class="text-gray-700 text-sm">Your Name</span>
@@ -107,7 +107,7 @@
 
           <!-- 3. QR Code -->
           @if($guest->attendance != 0 && $guest->qr_code_path)
-          <div class="flex flex-col items-center md:items-start">
+          <div class="flex flex-col items-center md:items-start text-center">
             <p class="text-sm text-gray-700 mb-2 text-center md:text-left">Scan this QR code at the event:</p>
             <img src="{{ asset($guest->qr_code_path) }}" alt="QR Code" class="w-32 h-32">
           </div>
