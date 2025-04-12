@@ -15,5 +15,6 @@ class Customer extends Model
         'category',
         'is_invitation_generated',
         'attendance',
+        'qr_code_path',
     ];
 }

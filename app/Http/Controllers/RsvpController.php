@@ -8,6 +8,8 @@ use App\Imports\Master\CustomersImport;
 use App\Exports\Master\CustomerImportTemplate;
 use App\Models\Customer;
 use App\Http\Controllers\ApiConsumerController;
+use Illuminate\Support\Facades\File;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Support\Str;
 
 class RsvpController extends Controller
@@ -45,7 +47,22 @@ class RsvpController extends Controller
         $guest = Customer::where('slug', $slug)->firstOrFail();
         $guest->update($request->all());
 
-        return redirect()->back()->with('success', 'Data berhasil diperbarui');
+        // Buat QR code yang hanya berisi slug
+        $qrDirectory = public_path('qrcodes');
+        if (!File::exists($qrDirectory)) {
+            File::makeDirectory($qrDirectory, 0755, true);
+        }
+
+        $fileName = $slug . '.svg';
+        $filePath = $qrDirectory . '/' . $fileName;
+
+        QrCode::format('svg')->size(300)->generate($slug, $filePath); // simpan sebagai .svg
+
+        // Simpan path QR code jika ingin ditampilkan kembali
+        $guest->qr_code_path = 'qrcodes/' . $fileName;
+        $guest->save();
+
+        return redirect()->back()->with('success', 'Data berhasil diperbarui & QR code disiapkan');
     }
 
     public  function export()

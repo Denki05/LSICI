@@ -23,12 +23,17 @@ Route::get('/camera', function () {
     return view('camera');
 });
 
+Route::get('/cameraQr', function () {
+    return view('admin.camera_qr');
+});
+
 // Route yang bisa diakses publik (tanpa login)
 Route::get('/admin/rsvp/page/{slug}', [RsvpController::class, 'page_invitation'])->name('admin.rsvp.page');
 Route::post('/admin/rsvp/updateInvitation/{id}', [RsvpController::class, 'updateInvitation'])->name('admin.updateInvitation');
 
 // Dashboard Admin (daftar tamu)
 Route::get('/admin/guests', [GuestController::class, 'index'])->middleware('auth');
+Route::post('/admin/guest-from-qr', [GuestController::class, 'storeFromQr'])->name('guest.storeFromQr');
 
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin', [AdminController::class, 'dashboard'])->name('admin.dashboard');

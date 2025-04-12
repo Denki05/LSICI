@@ -2,6 +2,24 @@
 
 @section('content')
 <div class="container">
+
+    <!-- Notifikasi sukses -->
+    @if (session('success'))
+        <div id="flash-success" class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+            {{ session('success') }}
+        </div>
+        <script>
+            setTimeout(() => {
+                const alert = document.getElementById('flash-success');
+                if (alert) {
+                    alert.remove();
+                }
+            }, 3000); // hilang setelah 3 detik
+        </script>
+    @endif
+
+
+    <!-- Notifikasi import excel -->
     @if(session('import_success') || session('import_failed'))
         <div class="alert alert-info">
             <h5>Hasil Import:</h5>
@@ -121,8 +139,8 @@
    $(document).ready(function() {
         $('#invitations').DataTable({
            paging: true,
-           pageLength: 5,
-           lengthMenu: [5, 10, 25, 50, 100],
+           pageLength: 10,
+           lengthMenu: [10, 25, 50, 100],
            order: [[0, 'asc']],
            responsive: true,
            columnDefs: [

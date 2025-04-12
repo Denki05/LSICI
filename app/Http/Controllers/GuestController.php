@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Guest;
+use App\Models\Customer;
 
 class GuestController extends Controller
 {
@@ -59,5 +60,36 @@ class GuestController extends Controller
     {
         $guests = Guest::all();
         return view('admin.guests', compact('guests'));
+    }
+
+    public function storeFromQr(Request $request)
+    {
+        $request->validate([
+            'slug' => 'required|string'
+        ]);
+
+        $slug = $request->input('slug');
+
+        // Cari customer berdasarkan slug
+        $customer = Customer::where('slug', $slug)->first();
+
+        if (!$customer) {
+            return response()->json(['error' => 'Customer not found'], 404);
+        }
+
+        // Cek apakah guest dengan slug ini sudah pernah dimasukkan
+        $existingGuest = Guest::where('slug', $slug)->first();
+        if ($existingGuest) {
+            return response()->json(['message' => 'Guest already registered'], 200);
+        }
+
+        // Simpan sebagai guest baru
+        Guest::create([
+            'name' => $customer->name,
+            'slug' => $slug,
+            'is_invitation' => 1,
+        ]);
+
+        return response()->json(['message' => 'Guest created successfully']);
     }
 }

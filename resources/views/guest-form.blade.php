@@ -11,42 +11,55 @@
 
     <!-- Google Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
     <script src="{{ asset('js/app.js') }}" defer></script>
 
     <script>
-        // Menutup alert otomatis setelah 5 detik
+        // Auto-close alert after 5 seconds
         setTimeout(function() {
             let alert = document.getElementById("alertMessage");
             if (alert) {
-                alert.classList.remove("show");  // Menghilangkan kelas 'show' Bootstrap
-                alert.classList.add("fade");     // Menambah efek fade
-                setTimeout(() => alert.remove(), 500); // Hapus elemen setelah efek fade
+                alert.classList.add("fade");
+                setTimeout(() => alert.remove(), 500);
             }
         }, 2000);
     </script>
 
-
     <style>
         body {
-            background-color: #f8f9fa;
+            background-color: #f0f2f5;
+            font-family: 'Nunito', sans-serif;
         }
 
         .guest-form-container {
             width: 100%;
             max-width: 500px;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         }
 
-        video, canvas {
-            width: 100%;
-            border-radius: 5px;
+        .form-label {
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .btn-hover {
+            transition: all 0.3s ease;
+        }
+
+        .btn-hover:hover {
+            background-color: #0056b3;
+            color: #ffffff;
+        }
+
+        #photoPreview {
+            max-height: 200px;
+            object-fit: cover;
         }
 
         .hidden {
@@ -58,7 +71,7 @@
     
     <div class="guest-form-container">
 
-        <!-- Notifikasi -->
+        <!-- Notifications -->
         @if(session('success'))
             <div id="alertMessage" class="alert alert-success alert-dismissible fade show" role="alert">
                 {{ session('success') }}
@@ -66,12 +79,19 @@
             </div>
         @endif
 
-        <h3 class="text-center mb-4">Isi Buku Tamu</h3>
+        @if(session('error'))
+            <div id="alertMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
+                {{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+
+        <h3 class="text-center mb-4 fw-bold">Isi Buku Tamu</h3>
         <form action="{{ url('/guest-form') }}" method="POST" enctype="multipart/form-data">
             @csrf
 
             <div class="mb-3">
-                <label for="name" class="form-label fw-bold">Nama:</label>
+                <label for="name" class="form-label">Nama:</label>
                 <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" required>
                 @error('name')
                 <div class="invalid-feedback">{{ $message }}</div>
@@ -79,7 +99,7 @@
             </div>
 
             <div class="mb-3">
-                <label for="phone" class="form-label fw-bold">No. HP:</label>
+                <label for="phone" class="form-label">No. HP:</label>
                 <input type="text" name="phone" class="form-control @error('phone') is-invalid @enderror" required>
                 @error('phone')
                 <div class="invalid-feedback">{{ $message }}</div>
@@ -87,17 +107,20 @@
             </div>
             
             <div class="mb-3">
-                <label for="email" class="form-label fw-bold">Email:</label>
+                <label for="email" class="form-label">Email:</label>
                 <input type="email" name="email" class="form-control">
             </div>
 
             <div class="mb-3">
-                <label for="company" class="form-label fw-bold">Company:</label>
-                <input type="text" name="company" class="form-control">
+                <label for="company" class="form-label">Company:</label>
+                <input type="text" name="company" class="form-control @error('company') is-invalid @enderror" required>
+                @error('company')
+                <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
             </div>
 
             <div class="mb-3">
-                <label class="form-label fw-bold">Ambil Foto:</label>
+                <label class="form-label">Ambil Foto:</label>
                 <button type="button" class="btn btn-success btn-sm" onclick="openCameraTab()">Buka Kamera</button>  
                 <input type="hidden" name="photo" id="photoInput">
                 <img id="photoPreview" class="img-thumbnail mt-2 hidden">
@@ -118,7 +141,7 @@
             let checkPhoto = setInterval(() => {
                 let photoData = localStorage.getItem("capturedPhoto");
                 if (photoData) {
-                    document.getElementById("photoInput").value = photoData; // Simpan ke input hidden
+                    document.getElementById("photoInput").value = photoData; // Save to hidden input
                     document.getElementById("photoPreview").src = photoData;
                     document.getElementById("photoPreview").classList.remove("hidden");
 
