@@ -13,6 +13,7 @@ class Customer extends Model
         'name',
         'slug',
         'category',
+        'officer',
         'is_invitation_generated',
         'attendance',
         'qr_code_path',

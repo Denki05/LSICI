@@ -10,7 +10,11 @@ class CustomerImportTemplate implements FromArray, ShouldAutoSize
     public function array(): array
     {
         return [
-            ['name', 'category']
+            [
+                'name', 
+                'category',
+                'officer',
+            ]
         ];
     }
 }

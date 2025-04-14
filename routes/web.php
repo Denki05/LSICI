@@ -37,14 +37,19 @@ Route::get('/admin/guests', [GuestController::class, 'index'])->middleware('auth
 Route::post('/admin/guest-from-qr', [GuestController::class, 'storeFromQr'])->name('guest.storeFromQr');
 
 Route::middleware(['auth', 'admin'])->group(function () {
+    // Guest
     Route::get('/admin', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::delete('/admin/guest/{id}', [AdminController::class, 'deleteGuest'])->name('admin.guest.delete');
+
+    // RSVP
+    Route::get('/admin/rsvp/export_guests', [RsvpController::class, 'export_guests'])->name('admin.export_guests');
 
     // Perbaikan: ubah URL RSVP agar tidak tumpang tindih
     Route::get('/admin/rsvp', [RsvpController::class, 'index'])->name('admin.rsvp');
     Route::get('/admin/rsvp/export', [RsvpController::class, 'export'])->name('admin.export');
     Route::post('/admin/rsvp/import', [RsvpController::class, 'import'])->name('admin.import');
     Route::get('/admin/rsvp/generateInvitation/{id}', [RsvpController::class, 'generateInvitation'])->name('admin.generateInvitation');
+    Route::delete('/admin/rsvp/delete/{id}', [RsvpController::class, 'delete'])->name('admin.rsvp.delete');
     
 });
 Auth::routes();

@@ -20,7 +20,8 @@
     <h2 class="mb-4">List Guest Book</h2>
 
     <div class="mb-4">
-        <a href="{{ url('/cameraQr') }}" target="_blank" class="btn btn-primary mb-3">📷 Scan QR Code</a>
+        <a href="{{ url('/cameraQr') }}" target="_blank" class="btn btn-primary mb-3">Scan QR Code</a>
+        <a href="{{ route('admin.export_guests') }}" target="_blank" class="btn btn-success mb-3">Export Guests</a>
     </div>
 
     <table class="table table-striped" id="guestbook">
@@ -31,6 +32,7 @@
                 <th>Phone</th>
                 <th>Email</th>
                 <th>Company</th>
+                <th>Foto</th>
                 <th>Action</th>
             </tr>
         </thead>
@@ -42,6 +44,10 @@
                 <td>{{ $guest->phone }}</td>
                 <td>{{ $guest->email }}</td>
                 <td>{{ $guest->company }}</td>
+                <td>
+                    <!--<img src="{{ asset($guest->photo) }}" alt="Guest Photo" width="100">-->
+                    <img src="{{ asset($guest->photo) }}" alt="Guest Photo" width="100">
+                </td>
                 <td>
                     <form action="{{ route('admin.guest.delete', $guest->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this guest?');">
                         @csrf

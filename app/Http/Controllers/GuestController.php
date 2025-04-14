@@ -7,6 +7,7 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Guest;
 use App\Models\Customer;
+use Illuminate\Support\Str;
 
 class GuestController extends Controller
 {
@@ -38,22 +39,25 @@ class GuestController extends Controller
         if (!empty($request->photo)) {
             $image = $request->photo;
     
-            // Menghilangkan prefix "data:image/png;base64,"
-            $image = str_replace('data:image/png;base64,', '', $image);
+            // Menghilangkan prefix base64 header jika ada
+            $image = preg_replace('/^data:image\/\w+;base64,/', '', $image);
             $image = str_replace(' ', '+', $image);
-            $imageName = 'guest_' . time() . '.png'; // Nama file unik
+            $imageName = 'guest_' . time() . '_' . Str::random(6) . '.png';
     
-            // Simpan gambar ke storage Laravel (public/photos/)
-            Storage::disk('public')->put('photos/' . $imageName, base64_decode($image));
+            // Path ke folder public/photos
+            $imagePath = public_path('photos/' . $imageName);
     
-            // Simpan path gambar di database
+            // Simpan gambar ke public/photos/
+            file_put_contents($imagePath, base64_decode($image));
+    
+            // Simpan path relatif di database
             $data['photo'] = 'photos/' . $imageName;
         }
     
         Guest::create($data);
     
         return redirect('/guest-form')->with('success', 'Data berhasil disimpan!');
-    }    
+    }
 
     // Menampilkan daftar tamu di dashboard admin
     public function index()

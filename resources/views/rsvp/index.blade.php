@@ -1,5 +1,26 @@
 @extends('layouts.app')
+<style>
+        .searchBox {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+        }
 
+        .searchContainer .btn {
+            margin-right: 5px;
+        }
+
+        .filtersContainer {
+            background-color: #ffffff;
+            padding: 15px;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+        }
+
+        .filtersContainer.d-none {
+            display: none;
+        }
+    </style>
 @section('content')
 <div class="container">
 
@@ -18,10 +39,9 @@
         </script>
     @endif
 
-
     <!-- Notifikasi import excel -->
     @if(session('import_success') || session('import_failed'))
-        <div class="alert alert-info">
+        <div class="alert alert-info" id="alert-info">
             <h5>Hasil Import:</h5>
             @if(session('import_success'))
                 <p><strong class="text-success">{{ count(session('import_success')) }} data berhasil diimport.</strong></p>
@@ -40,6 +60,15 @@
                 </ul>
             @endif
         </div>
+
+        <script>
+            setTimeout(() => {
+                const alert = document.getElementById('alert-info');
+                if (alert) {
+                    alert.remove();
+                }
+            }, 3000); // hilang setelah 3 detik
+        </script>
     @endif
 
     <h2 class="mb-4">List Customer Invitations</h2>
@@ -49,12 +78,82 @@
             Manage
         </button>
     </div>
-    
+
+    <!-- Search Form -->
+    <form method="GET" action="{{ route('admin.rsvp') }}">
+        <div class="searchBox p-3 mb-4 border rounded bg-light">
+            <h5 class="mb-3">Search</h5>
+
+            <div class="searchContainer">
+                <div class="input-group mb-3">
+                    <input type="text" name="search" class="form-control" placeholder="Search..." value="{{ request('search') }}">
+                    <button class="btn btn-outline-primary" type="submit">
+                        <i class="fas fa-search"></i> Search
+                    </button>
+                    <a href="{{ route('admin.rsvp') }}" class="btn btn-outline-danger" onclick="localStorage.removeItem('showAdvancedSearch')">
+                        <i class="fas fa-times"></i> Reset
+                    </a>
+                </div>
+                <button class="btn btn-outline-secondary" type="button" onclick="toggleFilters()">
+                    <i class="fas fa-sliders-h"></i> Advanced Search
+                </button>
+            </div>
+
+            <!-- Advanced Filters -->
+            <div class="filtersContainer mt-3 d-none" id="FiltersBox">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label"><i class="fas fa-folder"></i> Customer:</label>
+                        <select class="form-select" name="customer_id">
+                            <option value="">-- All Customers --</option>
+                            @foreach($customers as $customer)
+                                <option value="{{ $customer->id }}" {{ request('customer_id') == $customer->id ? 'selected' : '' }}>
+                                    {{ $customer->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label"><i class="far fa-folder"></i> Officer:</label>
+                        <select class="form-select" name="officer">
+                            <option value="">-- All Officers --</option>
+                            @foreach($officers as $officer)
+                                <option value="{{ $officer->officer }}" {{ request('officer') == $officer->officer ? 'selected' : '' }}>
+                                    {{ $officer->officer }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label"><i class="fas fa-file"></i> Attendance:</label>
+                        <select class="form-select" name="attendance">
+                            <option value="">-- All --</option>
+                            <option value="1" {{ request('attendance') == '1' ? 'selected' : '' }}>YES</option>
+                            <option value="0" {{ request('attendance') == '0' ? 'selected' : '' }}>NO</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label"><i class="fas fa-file"></i> Status of Invitation:</label>
+                        <select class="form-select" name="invitation_status">
+                            <option value="">-- All --</option>
+                            <option value="1" {{ request('invitation_status') == '1' ? 'selected' : '' }}>Generate</option>
+                            <option value="0" {{ request('invitation_status') == '0' ? 'selected' : '' }}>Not Generate</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
     <table class="table table-striped" id="invitations">
         <thead>
             <tr>
                 <th>#</th>
                 <th>Nama</th>
+                <th>Officer</th>
                 <th>Attendance</th>
                 <th>Action</th>
             </tr>
@@ -64,6 +163,7 @@
             <tr>
                 <td>{{ $loop->iteration }}</td>
                 <td>{{ $customer->name }}</td>
+                <td>{{ $customer->officer }}</td>
                 <td>
                     @if($customer->attendance == 1)
                         <span class="badge bg-success">Yes</span>
@@ -77,10 +177,22 @@
                             Generate
                         </a>
                     @else
+                        <button class="btn btn-info active" onclick="copyToClipboard('{{ route('admin.rsvp.page', base64_encode($customer->slug)) }}')" role="button" aria-pressed="true">
+                            Copy Link
+                        </button>
+
                         <a href="{{ route('admin.rsvp.page', base64_encode($customer->slug)) }}" class="btn btn-success active" role="button" aria-pressed="true" target="_blank">
                             View
                         </a>
                     @endif
+
+                    <form action="{{ route('admin.rsvp.delete', $customer->id) }}" method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this invitation?')">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger active" role="button" aria-pressed="true">
+                            Delete
+                        </button>
+                    </form>
                 </td>
             
             @endforeach
@@ -136,17 +248,48 @@
 
 @push('scripts')
 <script>
-   $(document).ready(function() {
+    $(document).ready(function() {
         $('#invitations').DataTable({
            paging: true,
            pageLength: 10,
            lengthMenu: [10, 25, 50, 100],
            order: [[0, 'asc']],
            responsive: true,
+           searching: false, // Disable search functionality
            columnDefs: [
-               { targets: [2], orderable: false } // Nonaktifkan sorting pada kolom "Action"
+               { targets: [2], orderable: false }
            ]
        });
-   });
+    });
+
+    function copyToClipboard(text) {
+        navigator.clipboard.writeText(text).then(() => {
+            alert('Link copied to clipboard!');
+        }).catch(err => {
+            console.error('Failed to copy text: ', err);
+        });
+    }
+
+    function toggleFilters() {
+        const filtersBox = document.getElementById('FiltersBox');
+        const isHidden = filtersBox.classList.contains('d-none');
+
+        if (isHidden) {
+            filtersBox.classList.remove('d-none');
+            localStorage.setItem('showAdvancedSearch', 'true');
+        } else {
+            filtersBox.classList.add('d-none');
+            localStorage.removeItem('showAdvancedSearch');
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const filtersBox = document.getElementById('FiltersBox');
+        const showAdvanced = localStorage.getItem('showAdvancedSearch');
+
+        if (showAdvanced === 'true') {
+            filtersBox.classList.remove('d-none');
+        }
+    });
 </script>
 @endpush

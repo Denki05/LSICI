@@ -24,6 +24,7 @@ class CustomersImport implements ToModel, WithHeadingRow
     {
         $excelName = strtolower(trim($row['name'] ?? ''));
         $category = $row['category'] ?? null;
+        $officer = $row['officer'] ?? null;
 
         // Sudah ada di database
         if (Customer::whereRaw('LOWER(name) = ?', [$excelName])->exists()) {
@@ -40,6 +41,7 @@ class CustomersImport implements ToModel, WithHeadingRow
             return new Customer([
                 'name'     => $row['name'],
                 'category' => $category,
+                'officer' => $officer,
             ]);
         }
 
@@ -50,6 +52,7 @@ class CustomersImport implements ToModel, WithHeadingRow
             return new Customer([
                 'name'     => $row['name'],
                 'category' => $category,
+                'officer' => $officer,
             ]);
         }
 

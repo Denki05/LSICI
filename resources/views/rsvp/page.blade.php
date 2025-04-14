@@ -47,7 +47,7 @@
         </div>
 
         <p class="mt-4 text-base md:text-sm">
-          Dear <b><i>{{ $guest->name }}</i></b>, join us at the biggest fragrance exhibition in Indonesia!
+          Kepada <b><i>{{ $guest->name }}</i></b>, Bergabunglah bersama kami dalam pameran wewangian terbesar di Indonesia!
         </p>
 
         <!-- Countdown -->
@@ -58,61 +58,60 @@
     <!-- Main content -->
     <main class="flex-grow">
       <section class="container mx-auto px-2 py-6 md:py-12 bg-white shadow-lg rounded-t-3xl">
-        <div class="grid grid-cols-1 md:grid-cols-{{ $guest->attendance != 0 ? '3' : '2' }} gap-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 px-4 md:px-12">
 
           <!-- 1. Event Details -->
-          <div class="text-center">
-            <h2 class="text-2xl md:text-3xl font-bold">Event Details</h2>
-            <p class="mt-4 text-sm md:text-base">📅 Date: 14-16 May 2025</p>
-            <p class="text-sm md:text-base">📍 Location: Hall D & A3, JL Expo Kemayoran, Jakarta, Indonesia</p>
-            <p class="text-sm md:text-base">⏰ Time: 10:00 AM - 6:00 PM</p>
+          <div class="text-center md:text-center">
+              <h2 class="text-2xl md:text-2xl font-bold">Detail Acara</h2>
+              <p class="mt-4 text-black-800 text-sm">📅 <strong>Tanggal:</strong> 14-16 May 2025</p>
+              <p class="mt-4 text-black-800 text-sm">📍 <strong>Lokasi:</strong> Hall D & A3, JL Expo Kemayoran, Jakarta, Indonesia</p>
+              <p class="mt-4 text-black-800 text-sm">⏰ <strong>Waktu:</strong> 10:00 - 18:00 WIB</p>
           </div>
 
           <!-- 2. RSVP Form or Confirmation -->
-          <div class="text-center">
-            <h2 class="text-xl md:text-2xl font-bold">Confirm Your Attendance</h2>
-            <form action="{{ route('admin.updateInvitation', $guest->slug) }}" method="POST" class="mt-4">
-              @csrf
+            <div class="text-center md:text-center">
+                <h2 class="text-xl md:text-2xl font-bold">Konfirmasi Kehadiran Anda</h2>
+                <form action="{{ route('admin.updateInvitation', $guest->slug) }}" method="POST" class="mt-4">
+                @csrf
 
-              @if($guest->attendance == 0)
-                <div class="grid grid-cols-2 gap-4">
-                  <div>
-                    <label class="block">
-                      <span class="text-gray-700 text-sm">Your Name</span>
-                      <input type="text" name="name" class="mt-2 p-2 w-full border rounded text-sm" required readonly value="{{ $guest->name ?? '' }}">
-                    </label>
+                @if($guest->attendance == 0)
+                  <div class="grid grid-cols-2 gap-4">
+                    <div>
+                      <label class="block">
+                          <span class="text-gray-700 text-sm font-bold">Kepada :</span>
+                          <input type="text" name="name" class="mt-2 p-2 w-full border rounded text-sm" required readonly value="{{ $guest->name ?? '' }}">
+                      </label>
+                    </div>
+                    <div>
+                      <label class="block">
+                          <span class="text-gray-700 text-sm font-bold">Kehadiran :</span>
+                          <select name="attendance" class="mt-2 p-2 w-full border rounded text-sm" required>
+                            <option value="">Silahkan Pilih</option>
+                            <option value="1">Ya, Saya hadir</option>
+                            <option value="0">Tidak, Saya tidak hadir</option>
+                          </select>
+                      </label>
+                    </div>
                   </div>
-                  <div>
-                    <label class="block">
-                      <span class="text-gray-700 text-sm">Will you be attending?</span>
-                      <select name="attendance" class="mt-2 p-2 w-full border rounded text-sm" required>
-                        <option value="">Choose your presence</option>
-                        <option value="1">Yes, I'll be there</option>
-                        <option value="0">No, I can't make it</option>
-                      </select>
-                    </label>
+                  <div class="mt-4 text-center md:text-left">
+                      <button type="submit" class="px-6 py-2 bg-green-600 text-white font-semibold rounded text-sm md:text-base">RSVP</button>
                   </div>
-                </div>
-                <div class="mt-4 text-center md:text-left">
-                  <button type="submit" class="px-6 py-2 bg-green-600 text-white font-semibold rounded text-sm md:text-base">RSVP</button>
-                </div>
-              @else
-                <div class="mt-4">
-                  <p class="text-green-600 text-sm md:text-base">Thank you for confirming your attendance!</p>
-                  <p class="mt-2 text-sm md:text-base">We look forward to seeing you at the event!</p>
-                </div>
+                @else
+                  <div class="mt-4">
+                      <p class="text-green-600 text-sm md:text-base">Terima kasih telah mengkonfirmasi kehadiran Anda!</p>
+                      <p class="mt-2 text-sm md:text-base">Kami menantikan kehadiran Anda di acara tersebut!</p>
+                  </div>
+                @endif
+              </form>
+            </div>
+
+            <!-- 3. QR Code -->
+            <div class="flex flex-col items-center text-center">
+              @if($guest->qr_code_path)
+                <p class="text-sm text-black-700 mb-2"><strong>Scan kode QR ini di acara:</strong></p>
+                <img src="{{ asset($guest->qr_code_path) }}" alt="QR Code" class="w-32 h-32">
               @endif
-            </form>
-          </div>
-
-          <!-- 3. QR Code -->
-          @if($guest->attendance != 0 && $guest->qr_code_path)
-          <div class="flex flex-col items-center md:items-start text-center">
-            <p class="text-sm text-gray-700 mb-2 text-center md:text-left">Scan this QR code at the event:</p>
-            <img src="{{ asset($guest->qr_code_path) }}" alt="QR Code" class="w-32 h-32">
-          </div>
-          @endif
-
+            </div>
         </div>
       </section>
     </main>
