@@ -67,14 +67,25 @@
 <script>
    $(document).ready(function() {
         $('#guestbook').DataTable({
-           paging: true,
-           pageLength: 5,
-           lengthMenu: [5, 10, 25, 50, 100],
-           order: [[0, 'asc']],
-           responsive: true,
-           columnDefs: [
-               { targets: [4], orderable: false } // Nonaktifkan sorting pada kolom "Action"
-           ]
+            paging: true,
+            pageLength: 5,
+            lengthMenu: [5, 10, 25, 50, 100],
+            order: [[0, 'asc']],
+            responsive: true,
+            columnDefs: [
+                { targets: [4], orderable: false } // Nonaktifkan sorting pada kolom "Action"
+            ],
+            // dom: 'Bfrtip',
+            // buttons: [
+            //     {
+            //         extend: 'excelHtml5',
+            //         title: 'GuestBook',
+            //         exportOptions: {
+            //             columns: ':visible'
+            //         },
+            //         className: 'btn btn-success'
+            //     },
+            // ]
         });
    });
 

@@ -92,18 +92,12 @@
 
             <div class="mb-3">
                 <label for="name" class="form-label">Nama:</label>
-                <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" required>
-                @error('name')
-                <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
+                <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" value="{{ $name }}" required>
             </div>
 
             <div class="mb-3">
                 <label for="phone" class="form-label">No. HP:</label>
-                <input type="text" name="phone" class="form-control @error('phone') is-invalid @enderror" required>
-                @error('phone')
-                <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
+                <input type="text" name="phone" class="form-control @error('phone') is-invalid @enderror"required>
             </div>
             
             <div class="mb-3">
@@ -113,10 +107,7 @@
 
             <div class="mb-3">
                 <label for="company" class="form-label">Company:</label>
-                <input type="text" name="company" class="form-control @error('company') is-invalid @enderror" required>
-                @error('company')
-                <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
+                <input type="text" name="company" class="form-control @error('company') is-invalid @enderror" value="{{ $company }}" required>
             </div>
 
             <div class="mb-3">

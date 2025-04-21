@@ -109,10 +109,11 @@
             <div class="flex flex-col items-center text-center">
               @if($guest->qr_code_path)
                 <p class="text-sm text-black-700 mb-2"><strong>Scan kode QR ini di acara:</strong></p>
-                <img src="{{ asset($guest->qr_code_path) }}" alt="QR Code" class="w-32 h-32">
+                <!-- <img src="{{ asset($guest->qr_code_path) }}" alt="QR Code" class="w-32 h-32"> -->
+                <div id="qrcode" class="w-32 h-32"></div>
               @endif
             </div>
-        </div>
+        </div> 
       </section>
     </main>
 
@@ -122,6 +123,7 @@
     </footer>
 
     <!-- Countdown Script -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script>
       const targetDate = new Date("2025-05-14T10:00:00");
 
@@ -164,6 +166,12 @@
 
       updateCountdown();
       setInterval(updateCountdown, 1000);
+
+      var qr = new QRCode(document.getElementById("qrcode"), {
+        text: "{{ url('/guest-form') }}?slug={{ $guest->slug }}",
+        width: 250,
+        height: 250
+      });
     </script>
   </body>
 </html>

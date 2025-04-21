@@ -18,9 +18,20 @@ class GuestController extends Controller
     }
 
     // Menampilkan halaman formulir tamu
-    public function showForm()
+    public function showForm(Request $request)
     {
-        return view('guest-form');
+        $name = '';
+        $company = '';
+
+        if ($request->has('slug')) {
+            $customer = Customer::where('slug', $request->slug)->first();
+            if ($customer) {
+                $name = $customer->name;
+                $company = $customer->company;
+            }
+        }
+
+        return view('guest-form', compact('name', 'company'));
     }
     
     public function store(Request $request)

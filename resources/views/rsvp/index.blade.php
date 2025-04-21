@@ -82,21 +82,22 @@
     <!-- Search Form -->
     <form method="GET" action="{{ route('admin.rsvp') }}">
         <div class="searchBox p-3 mb-4 border rounded bg-light">
-            <h5 class="mb-3">Search</h5>
 
             <div class="searchContainer">
                 <div class="input-group mb-3">
-                    <input type="text" name="search" class="form-control" placeholder="Search..." value="{{ request('search') }}">
+                    <input type="text" name="search" class="form-control" placeholder="Search" value="{{ request('search') }}">
                     <button class="btn btn-outline-primary" type="submit">
                         <i class="fas fa-search"></i> Search
                     </button>
+
                     <a href="{{ route('admin.rsvp') }}" class="btn btn-outline-danger" onclick="localStorage.removeItem('showAdvancedSearch')">
                         <i class="fas fa-times"></i> Reset
                     </a>
+                    
+                    <button class="btn btn-outline-secondary" type="button" onclick="toggleFilters()">
+                        <i class="fas fa-sliders-h"></i> Advanced Search
+                    </button>
                 </div>
-                <button class="btn btn-outline-secondary" type="button" onclick="toggleFilters()">
-                    <i class="fas fa-sliders-h"></i> Advanced Search
-                </button>
             </div>
 
             <!-- Advanced Filters -->
