@@ -132,7 +132,7 @@
                         <select class="form-select" name="attendance">
                             <option value="">-- All --</option>
                             <option value="1" {{ request('attendance') == '1' ? 'selected' : '' }}>YES</option>
-                            <option value="0" {{ request('attendance') == '0' ? 'selected' : '' }}>NO</option>
+                            <option value="2" {{ request('attendance') == '2' ? 'selected' : '' }}>NO</option>
                         </select>
                     </div>
 
@@ -166,10 +166,12 @@
                 <td>{{ $customer->name }}</td>
                 <td>{{ $customer->officer }}</td>
                 <td>
-                    @if($customer->attendance == 1)
-                        <span class="badge bg-success">Yes</span>
+                    @if($customer->attendance_label == 'Attended')
+                        <span class="badge bg-success">Attended</span>
+                    @elseif($customer->attendance_label == 'Not Attended')
+                        <span class="badge bg-danger">Not Attended</span>
                     @else
-                        <span class="badge bg-danger">No</span>
+                        <span class="badge bg-secondary">Pending</span>
                     @endif
                 </td>
                 <td>

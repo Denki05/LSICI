@@ -18,4 +18,16 @@ class Customer extends Model
         'attendance',
         'qr_code_path',
     ];
+
+    public const ATTENDANCE = [
+        0 => 'Pending',
+        1 => 'Attended',
+        2 => 'Not Attended',
+    ];
+
+    // Optional: akses helper
+    public function getAttendanceLabelAttribute()
+    {
+        return self::ATTENDANCE[$this->attendance] ?? 'Unknown';
+    }
 }

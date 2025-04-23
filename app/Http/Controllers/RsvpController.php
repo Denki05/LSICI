@@ -85,7 +85,10 @@ class RsvpController extends Controller
     public function updateInvitation(Request $request, $slug)
     {
         $guest = Customer::where('slug', $slug)->firstOrFail();
-        $guest->update($request->all());
+
+        $guest->update([
+            'attendance' => $request->input('is_attending')
+        ]);
 
         return redirect()->back()->with('success', 'Data berhasil diperbarui & QR code disiapkan');
     }

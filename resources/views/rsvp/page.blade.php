@@ -93,7 +93,7 @@
       padding: 8px 16px;
       border-radius: 20px;
       font-weight: 900;
-      font-size: 30px;
+      font-size: 20px;
       -webkit-text-stroke: 0.5px #ccc;
       color: #000000;
       margin: 10px 0 20px;
@@ -151,6 +151,34 @@
       background-color: #ccc;
       color: #333;
     }
+
+    .jumbotron {
+      background-color: #f8f9fa;
+      border-left: 5px solid #ffc107;
+      border-right: 5px solid #ffc107;
+      padding: 10px;
+      border-radius: 10px;
+      text-align: center;
+      font-weight: bold;
+      font-size: 12px;
+      color: #555;
+      max-width: 600px;
+      margin: -20px auto 0; /* Naikkan sedikit dengan margin negatif */
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .rsvp-button-group {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      flex-wrap: wrap;
+      margin: -20px auto 0;
+    }
+
+    .rsvp-button-group form {
+      margin: 0;
+    }
+
     .footer-logos {
       display: flex;
       justify-content: center;
@@ -193,7 +221,7 @@
       <img src="{{ route('rsvp.image', ['filename' => 'ppi.png']) }}" alt="Premium Parfum Indonesia">
       </div>
     <div class="dear-invite">
-      <div class="dear-text">Dear, <strong>________________</strong></div>
+      <div class="dear-text">Dear, <strong><i>{{ $guest->name }}</i></strong></div>
       <div class="invite-box">YOU'RE INVITED TO</div>
     </div>
     <div class="title">INDONESIA<br>COSMETICS<br>INGREDIENTS<br>2025</div>
@@ -202,11 +230,35 @@
     <div class="detail-rsvp-box">
       <div class="event-left-row">
         <div class="event-details">
-          <div class="date">JIExpo Kemayoran, Jakarta <br> Booth S4 (17 - 20)</div>
+          <div class="date"> 
+          <svg xmlns="http://www.w3.org/2000/svg" height="32" viewBox="0 0 24 24" fill="#d19e1d" style="vertical-align: middle; margin-right: 5px;">
+            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 
+                    0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 
+                    2.5 2.5-1.12 2.5-2.5 2.5z"/>
+          </svg>
+            JIExpo Kemayoran, Jakarta <br> Booth S4 (17 - 20)</div>
         </div>
+
         <div class="rsvp-buttons">
-          <button class="attend">Attend</button>
-          <button class="not-attend">Not Attend</button>
+          @if ($guest->attendance == 0)
+          <div class="rsvp-button-group">
+            <form action="{{ route('admin.updateInvitation', ['id' => $guest->slug]) }}" method="POST">
+              @csrf
+              <input type="hidden" name="is_attending" value="1">
+              <button type="submit" class="attend">Attend</button>
+            </form>
+
+            <form action="{{ route('admin.updateInvitation', ['id' => $guest->slug]) }}" method="POST">
+              @csrf
+              <input type="hidden" name="is_attending" value="2">
+              <button type="submit" class="not-attend">Not Attend</button>
+            </form>
+          </div>
+          @elseif ($guest->attendance == 1 || $guest->attendance == 2)
+          <div class="jumbotron">
+            Thank you for your RSVP. We're glad you're attending!
+          </div>
+          @endif
         </div>
       </div>  
         <div class="event-right-row">
