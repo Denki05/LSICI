@@ -20,8 +20,8 @@
     <h2 class="mb-4">List Guest Book</h2>
 
     <div class="mb-4">
-        <a href="{{ url('/cameraQr') }}" target="_blank" class="btn btn-primary mb-3">Scan QR Code</a>
-        <a href="{{ route('admin.export_guests') }}" target="_blank" class="btn btn-success mb-3">Export Guests</a>
+        <a href="{{ url('/cameraQr') }}" target="_blank" class="btn btn-primary mb-3">📷 Scan QR Code</a>
+        <a href="{{ route('admin.export_guests') }}" target="_blank" class="btn btn-success mb-3">📤 Export Guests</a>
     </div>
 
     <table class="table table-striped" id="guestbook">
