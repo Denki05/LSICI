@@ -52,6 +52,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::post('/admin/rsvp/import', [RsvpController::class, 'import'])->name('admin.import');
     Route::get('/admin/rsvp/generateInvitation/{id}', [RsvpController::class, 'generateInvitation'])->name('admin.generateInvitation');
     Route::delete('/admin/rsvp/delete/{id}', [RsvpController::class, 'delete'])->name('admin.rsvp.delete');
+    Route::get('/admin/rsvp/exportAttendance', [RsvpController::class, 'exportAttendance'])->name('admin.exportAttendance');
     
 });
 Auth::routes();

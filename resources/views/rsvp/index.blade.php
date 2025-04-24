@@ -70,6 +70,10 @@
         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
             Manage
         </button>
+
+        <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#exportRsvp">
+            Export RSVP
+        </button>
     </div>
 
     <!-- Search Form -->
@@ -237,10 +241,44 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
+</div>
+
+<!-- Export RSVP -->
+<div class="modal fade" id="exportRsvp" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Export RSVP</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <hr>
+        <div class="mt-4">
+            <h6 class="font-weight-bold">Export Berdasarkan Officer :</h6>
+            <form method="GET" action="{{ route('admin.exportAttendance') }}">
+                <div class="mb-3">
+                    <select class="form-select select2" name="officer" id="export_officer" required>
+                        <option value="">Pilih Officer</option>
+                        @foreach($officers as $officer)
+                            <option value="{{ $officer->officer }}">{{ $officer->officer }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-success">Export</button>
+            </form>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
 </div>
 @endsection
 
@@ -257,6 +295,17 @@
            columnDefs: [
                { targets: [2], orderable: false }
            ]
+       });
+
+       $('.select2').select2({
+           dropdownParent: $('#exportRsvp') // Ensure dropdown appears within the modal
+       });
+
+       // Reinitialize Select2 when the modal is shown
+       $('#exportRsvp').on('shown.bs.modal', function () {
+           $('#export_officer').select2({
+               dropdownParent: $('#exportRsvp') // Ensure dropdown appears within the modal
+           });
        });
     });
 

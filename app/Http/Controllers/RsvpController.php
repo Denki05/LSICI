@@ -7,6 +7,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\Master\CustomersImport;
 use App\Exports\Master\CustomerImportTemplate;
 use App\Exports\Master\GuestExport;
+use App\Exports\Master\RsvpExport;
 use App\Models\Customer;
 use App\Http\Controllers\ApiConsumerController;
 use Illuminate\Support\Facades\File;
@@ -159,5 +160,17 @@ class RsvpController extends Controller
         $customer->delete();
 
         return redirect()->back()->with('success', 'Data berhasil dihapus');
+    }
+
+    public function exportAttendance(Request $request)
+    {
+        $query = Customer::query()->where('is_invitation_generated', 1);
+
+        if ($request->filled('officer')) {
+            $query->where('officer', $request->officer);
+        }
+
+        $attendees = $query->get();
+        return Excel::download(new RsvpExport($attendees), 'attendance.xlsx');
     }
 }
