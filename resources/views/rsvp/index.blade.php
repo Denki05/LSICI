@@ -148,6 +148,7 @@
                 <th>#</th>
                 <th>Nama</th>
                 <th>Officer</th>
+                <th>Category</th>
                 <th>Attendance</th>
                 <th>Action</th>
             </tr>
@@ -158,6 +159,7 @@
                 <td>{{ $loop->iteration }}</td>
                 <td>{{ $customer->name }}</td>
                 <td>{{ $customer->officer }}</td>
+                <td>{{ $customer->category }}</td>
                 <td>
                     @if($customer->attendance_label == 'Attended')
                         <span class="badge bg-success">Attended</span>
@@ -249,7 +251,7 @@
            paging: true,
            pageLength: 10,
            lengthMenu: [10, 25, 50, 100],
-           order: [[0, 'asc']],
+           order: [[1, 'asc']],
            responsive: true,
            searching: false, // Disable search functionality
            columnDefs: [
