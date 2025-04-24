@@ -41,7 +41,7 @@
 
     <!-- Notifikasi import excel -->
     @if(session('import_success') || session('import_failed'))
-        <div class="alert alert-info" id="alert-info">
+        <div class="alert">
             <h5>Hasil Import:</h5>
             @if(session('import_success'))
                 <p><strong class="text-success">{{ count(session('import_success')) }} data berhasil diimport.</strong></p>
@@ -60,20 +60,13 @@
                 </ul>
             @endif
         </div>
-
-        <script>
-            setTimeout(() => {
-                const alert = document.getElementById('alert-info');
-                if (alert) {
-                    alert.remove();
-                }
-            }, 3000); // hilang setelah 3 detik
-        </script>
     @endif
 
     <h2 class="mb-4">List Customer Invitations</h2>
 
     <div class="mb-3">
+        <a class="btn btn-success" href="{{ route('admin.create') }}" role="button">Create</a>
+
         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
             Manage
         </button>

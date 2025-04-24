@@ -46,6 +46,8 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
     // Perbaikan: ubah URL RSVP agar tidak tumpang tindih
     Route::get('/admin/rsvp', [RsvpController::class, 'index'])->name('admin.rsvp');
+    Route::get('/admin/rsvp/create', [RsvpController::class, 'create'])->name('admin.create');
+    Route::post('/admin/rsvp/store', [RsvpController::class, 'store'])->name('admin.store');
     Route::get('/admin/rsvp/export', [RsvpController::class, 'export'])->name('admin.export');
     Route::post('/admin/rsvp/import', [RsvpController::class, 'import'])->name('admin.import');
     Route::get('/admin/rsvp/generateInvitation/{id}', [RsvpController::class, 'generateInvitation'])->name('admin.generateInvitation');

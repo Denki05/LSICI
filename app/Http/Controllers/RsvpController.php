@@ -46,6 +46,32 @@ class RsvpController extends Controller
         return view('rsvp.index', compact('customers', 'officers'));
     }
 
+    public function create()
+    {
+        return view('rsvp.create');
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'category' => 'required|string|max:255',
+            'officer' => 'required|string|max:255',
+        ]);
+
+        // dd($request->all());
+
+        $customer = new Customer();
+        $customer->name = $request->input('name');
+        $customer->category = $request->input('category');
+        $customer->officer = $request->input('officer');
+        $customer->is_invitation_generated = 0;
+        $customer->attendance = 0;
+        $customer->save();
+
+        return redirect()->route('admin.rsvp')->with('success', 'Data berhasil ditambahkan');
+    }
+
     public function generateInvitation($id)
     { 
         $guest = Customer::findOrFail($id);
