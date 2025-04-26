@@ -84,18 +84,26 @@ class GuestController extends Controller
         ]);
 
         $slug = $request->input('slug');
+        
+        // dd($slug);
 
         // Cari customer berdasarkan slug
         $customer = Customer::where('slug', $slug)->first();
 
         if (!$customer) {
-            return response()->json(['error' => 'Customer not found'], 404);
+            return response()->json([
+                'success' => false,
+                'message' => 'Data tamu tidak ditemukan.'
+            ]);
         }
 
         // Cek apakah guest dengan slug ini sudah pernah dimasukkan
         $existingGuest = Guest::where('slug', $slug)->first();
         if ($existingGuest) {
-            return response()->json(['message' => 'Guest already registered'], 200);
+            return response()->json([
+                'success' => false,
+                'message' => 'Data sudah pernah diproses.',
+            ]);
         }
 
         // Simpan sebagai guest baru
@@ -105,6 +113,9 @@ class GuestController extends Controller
             'is_invitation' => 1,
         ]);
 
-        return response()->json(['message' => 'Guest created successfully']);
+        return response()->json([
+            'success' => true,
+            'message' => 'Data berhasil disimpan.',
+        ]);
     }
 }

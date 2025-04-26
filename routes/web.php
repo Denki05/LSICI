@@ -31,16 +31,16 @@ Route::get('/cameraQr', function () {
 // Route yang bisa diakses publik (tanpa login)
 Route::get('/admin/rsvp/page/{slug}', [RsvpController::class, 'page_invitation'])->name('admin.rsvp.page');
 Route::post('/admin/rsvp/updateInvitation/{id}', [RsvpController::class, 'updateInvitation'])->name('admin.updateInvitation');
+Route::post('/admin/storeFromQr', [GuestController::class, 'storeFromQr'])->name('guest.storeFromQr');
 
 // Dashboard Admin (daftar tamu)
 Route::get('/admin/guests', [GuestController::class, 'index'])->middleware('auth');
-Route::post('/admin/guest-from-qr', [GuestController::class, 'storeFromQr'])->name('guest.storeFromQr');
 
 Route::middleware(['auth', 'admin'])->group(function () {
     // Guest
     Route::get('/admin', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::delete('/admin/guest/{id}', [AdminController::class, 'deleteGuest'])->name('admin.guest.delete');
-
+    
     // RSVP
     Route::get('/admin/rsvp/export_guests', [RsvpController::class, 'export_guests'])->name('admin.export_guests');
 
@@ -53,14 +53,13 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/rsvp/generateInvitation/{id}', [RsvpController::class, 'generateInvitation'])->name('admin.generateInvitation');
     Route::delete('/admin/rsvp/delete/{id}', [RsvpController::class, 'delete'])->name('admin.rsvp.delete');
     Route::get('/admin/rsvp/exportAttendance', [RsvpController::class, 'exportAttendance'])->name('admin.exportAttendance');
-    
 });
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 Route::get('/qrcodes/{filename}', function ($filename) {
-    $path = public_path('qrcodes/' . $filename);
+    $path = public_path($filename);
 
     if (!file_exists($path)) {
         abort(404);

@@ -3,10 +3,36 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Open Graph & Twitter Card for Sharing -->
+    <!-- MS Tile - for Microsoft apps-->
+    <meta name="msapplication-TileImage" content="{{ route('rsvp.image', ['filename' => 'thumnailcic.png']) }}">    
+    
+    <!-- fb & Whatsapp -->
+    
+    <!-- Site Name, Title, and Description to be displayed -->
+    <meta property="og:site_name" content="Invitation - Indonesia Cosmetics Ingredients 2025">
+    <meta property="og:title" content="Invitation - Indonesia Cosmetics Ingredients 2025">
+    <meta property="og:description" content="Join us at JIExpo Kemayoran, Jakarta — May 14-16, 2025. Booth S4 (17 - 20). Tap to RSVP and be part of the exclusive event!">
+    
+    <!-- Image to display -->
+    <!-- Replace   «example.com/image01.jpg» with your own -->
+    <meta property="og:image" content="{{ route('rsvp.image', ['filename' => 'thumnailcic.png']) }}">
+    
+    <!-- No need to change anything here -->
+    <meta property="og:type" content="website" />
+    <meta property="og:image:type" content="image/png">
+    
+    <!-- Size of image. Any size up to 300. Anything above 300px will not work in WhatsApp -->
+    <meta property="og:image:width" content="300">
+    <meta property="og:image:height" content="300">
+    
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@100..900&display=swap" rel="stylesheet">
   <title>Invitation - Indonesia Cosmetics Ingredients 2025</title>
+  <link rel="icon" href="{{ route('rsvp.image', ['filename' => 'thumnailcic.png']) }}" type="image/x-icon">
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -81,7 +107,7 @@
     }
     .title {
       font-family: "League Spartan", sans-serif;
-      font-size: 47px;
+      font-size: 45px;
       font-weight: 900;
       margin: 15px 0 5px;
     }
@@ -93,7 +119,7 @@
       padding: 8px 16px;
       border-radius: 20px;
       font-weight: 900;
-      font-size: 20px;
+      font-size: 18px;
       -webkit-text-stroke: 0.5px #ccc;
       color: #000000;
       margin: 10px 0 20px;
@@ -196,10 +222,11 @@
     }
     @media (max-width: 600px) {
       .title {
-        font-size: 47px;
+        font-size: 40px;
+        margin-top: 15px;
       }
       .date-highlight {
-        font-size: 20px;
+        font-size: 16px;
         padding: 6px 12px;
       }
       .location {
@@ -220,10 +247,12 @@
       <div class="header">
       <img src="{{ route('rsvp.image', ['filename' => 'ppi.png']) }}" alt="Premium Parfum Indonesia">
       </div>
+      
+    <div style="margin-bottom: 10px;"><strong>Dear,</strong></div>
     <div class="dear-invite">
-      <div class="dear-text">Dear, <strong><i>{{ $guest->name }}</i></strong></div>
-      <div class="invite-box">YOU'RE INVITED TO</div>
+      <div class="dear-text"><i>{{ $guest->name }}</i></div>
     </div>
+    <div class="date-highlight">YOU'RE INVITED TO</div>
     <div class="title">INDONESIA<br>COSMETICS<br>INGREDIENTS<br>2025</div>
     <div class="date-highlight">May, 14-16 2025</div>
 
@@ -262,7 +291,7 @@
         </div>
       </div>  
         <div class="event-right-row">
-          <img src="{{ route('rsvp.image', ['filename' => 'qr-code.png']) }}" alt="qr-code">
+          <img src="{{ route('qr.show', ['filename' => $guest->qr_code_path]) }}" alt="QR Code untuk {{ $guest->name }}">
         </div>
       </div>
   

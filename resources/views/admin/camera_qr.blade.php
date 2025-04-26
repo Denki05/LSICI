@@ -75,13 +75,24 @@
                             });
 
                             const data = await response.json();
-                            alert(data.message || data.error || "QR berhasil diproses.");
-
-                            if (window.opener) window.opener.location.reload();
+                            
+                            if (window.opener) {
+                                window.opener.postMessage({
+                                    type: "qrScanResult",
+                                    status: data.success ? "success" : "error",
+                                    message: data.success ? "Data berhasil dimuat dari QR Code." : (data.message || "Data tidak ditemukan."),
+                                    payload: data
+                                }, "*");
+                            }
                             window.close();
                         } catch (error) {
-                            console.error("QR Processing Error:", error);
-                            alert("Gagal memproses QR Code.");
+                           if (window.opener) {
+                                window.opener.postMessage({
+                                    type: "qrScanResult",
+                                    status: "error",
+                                    message: "Terjadi kesalahan saat memproses QR Code."
+                                }, "*");
+                            }
                             window.close();
                         }
                     },

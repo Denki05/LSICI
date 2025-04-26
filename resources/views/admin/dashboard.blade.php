@@ -75,17 +75,6 @@
             columnDefs: [
                 { targets: [4], orderable: false } // Nonaktifkan sorting pada kolom "Action"
             ],
-            // dom: 'Bfrtip',
-            // buttons: [
-            //     {
-            //         extend: 'excelHtml5',
-            //         title: 'GuestBook',
-            //         exportOptions: {
-            //             columns: ':visible'
-            //         },
-            //         className: 'btn btn-success'
-            //     },
-            // ]
         });
    });
 
