@@ -86,17 +86,20 @@
                     <input type="text" class="form-control @error('company') is-invalid @enderror" id="company" name="company" value="{{ old('company') }}">
                     @error('company')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
+                
+                <div class="col-12 mb-3">
+                    <img id="photoPreview" class="img-thumbnail mt-2 hidden">
+                </div>
 
                 <div class="col-12 mb-3">
                     <label class="form-label">Ambil Foto:</label><br>
                     <button type="button" class="btn btn-success btn-sm" onclick="openCameraTab()">Buka Kamera</button>
                     <input type="hidden" name="photo" id="photoInput">
-                    <img id="photoPreview" class="img-thumbnail mt-2 hidden">
                 </div>
             </div>
 
             <div class="d-flex justify-content-between">
-                <button type="button" class="btn btn-info btn-hover" onclick="openQrScanner()">ðŸ“· Scan QR Code</button>
+                <button type="button" class="btn btn-info btn-hover" onclick="openQrScanner()">📷 Scan QR Code</button>
                 <button type="submit" class="btn btn-primary btn-hover">Kirim</button>
             </div>
         </form>
@@ -107,6 +110,10 @@
     <script>
         function openQrScanner() {
             window.open("{{ url('/cameraQr') }}", "_blank", "width=600,height=600");
+        }
+        
+        function openCameraTab() {
+            window.open("{{ url('/camera') }}", "_blank", "width=600,height=600");
         }
     
         // Auto-close alert after 2 seconds
@@ -143,6 +150,16 @@
                     document.getElementById("name").value = data.payload.name;
                 }
             }
+            
+            // PHOTO TAKEN RESULT
+    if (data && data.type === "photoTaken" && data.imageData) {
+        const photoPreview = document.getElementById("photoPreview");
+        const photoInput = document.getElementById("photoInput");
+
+        photoPreview.src = data.imageData;
+        photoPreview.classList.remove("hidden");
+        photoInput.value = data.imageData;
+    }
         });
     </script>
 
