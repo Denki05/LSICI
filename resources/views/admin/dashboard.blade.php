@@ -19,9 +19,13 @@
 
     <h2 class="mb-4">List Guest Book</h2>
 
-    <div class="mb-4">
-        <a href="{{ url('/cameraQr') }}" target="_blank" class="btn btn-primary mb-3">📷 Scan QR Code</a>
-        <a href="{{ route('admin.export_guests') }}" target="_blank" class="btn btn-success mb-3">📤 Export Guests</a>
+    <div class="mb-4 d-flex gap-2">
+        <a href="{{ route('admin.export_guests') }}" target="_blank" class="btn btn-success mb-3">
+            📤 Export Guests
+        </a>
+        <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#exampleModal">
+            🛠️ Manage
+        </button>
     </div>
 
     <table class="table table-striped" id="guestbook">
@@ -33,7 +37,6 @@
                 <th>Email</th>
                 <th>Company</th>
                 <th>Foto</th>
-                <th>Action</th>
             </tr>
         </thead>
         <tbody>
@@ -45,20 +48,69 @@
                 <td>{{ $guest->email }}</td>
                 <td>{{ $guest->company }}</td>
                 <td>
-                    <!--<img src="{{ asset($guest->photo) }}" alt="Guest Photo" width="100">-->
-                    <img src="{{ asset($guest->photo) }}" alt="Guest Photo" width="100">
+                    @if($guest->is_invitation != 1 && $guest->photo)
+                        <a href="{{ asset($guest->photo) }}" target="_blank">
+                            <img src="{{ asset($guest->photo) }}" alt="Guest Photo" width="100">
+                        </a>
+
+                        <!-- <img src="{{ url('guestbook/public/' . $guest->photo) }}" alt="Guest Photo" width="100"> -->
+                    @else
+                        <form action="{{ route('admin.guest.upload_photo', $guest->id) }}" method="POST" enctype="multipart/form-data">
+                            @csrf
+                            <input type="file" name="photo" accept="image/*" onchange="this.form.submit()">
+                        </form>
+                    @endif
                 </td>
-                <td>
-                    <form action="{{ route('admin.guest.delete', $guest->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this guest?');">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
-                    </form>
-                </td>
+                
             </tr>
             @endforeach
         </tbody>
     </table>
+</div>
+
+<!-- export & import -->
+ <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="exampleModalLabel">Manage GuestBook</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md">
+                        <h6 class="font-weight-bold">Import</h6>
+                        <p>
+                            Import your data using the template provided below.<br>
+                            <span class="text-danger"><b>Do not</b></span> modify or remove the header (first row).<br>
+                            Only fill in the allowed columns; additional columns will be ignored.
+                        </p>
+                        @if(isset($import_custom_message))
+                        <div class="alert alert-info">
+                            <strong>Note:</strong><br>
+                            {!! $import_custom_message !!}
+                        </div>
+                        @endif
+                        <a href="{{ route('admin.guest.export') }}" class="btn btn-info btn-sm">
+                            <i class="fa fa-download me-2"></i>Download Template
+                        </a>
+                        <hr>
+                        <form action="{{ route('admin.guest.import') }}" method="POST" enctype="multipart/form-data">
+                            @csrf
+                            <div class="mb-3">
+                                <label for="import_file" class="form-label">Choose File</label>
+                                <input type="file" class="form-control" id="import_file" name="import_file" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">Import</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
 </div>
 @endsection
 
@@ -67,14 +119,14 @@
 <script>
    $(document).ready(function() {
         $('#guestbook').DataTable({
-            paging: true,
-            pageLength: 5,
-            lengthMenu: [5, 10, 25, 50, 100],
-            order: [[0, 'asc']],
-            responsive: true,
-            columnDefs: [
-                { targets: [4], orderable: false } // Nonaktifkan sorting pada kolom "Action"
-            ],
+           paging: true,
+           pageLength: 10,
+           lengthMenu: [20, 50, 100],
+           order: [[0, 'asc']],
+           responsive: true,
+           columnDefs: [
+               { targets: [4], orderable: false } // Nonaktifkan sorting pada kolom "Action"
+           ]
         });
    });
 

@@ -40,6 +40,9 @@ Route::middleware(['auth', 'admin'])->group(function () {
     // Guest
     Route::get('/admin', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::delete('/admin/guest/{id}', [AdminController::class, 'deleteGuest'])->name('admin.guest.delete');
+    Route::post('/admin/guest/{id}/upload-photo', [AdminController::class, 'uploadPhoto'])->name('admin.guest.upload_photo');
+    Route::get('/admin/guest/export', [AdminController::class, 'export'])->name('admin.guest.export');
+    Route::post('/admin/guest/import', [AdminController::class, 'import'])->name('admin.guest.import');
     
     // RSVP
     Route::get('/admin/rsvp/export_guests', [RsvpController::class, 'export_guests'])->name('admin.export_guests');
